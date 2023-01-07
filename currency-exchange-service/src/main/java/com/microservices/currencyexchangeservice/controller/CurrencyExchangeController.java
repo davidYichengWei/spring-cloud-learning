@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.microservices.currencyexchangeservice.bean.CurrencyExchange;
+import com.microservices.currencyexchangeservice.jpa.CurrencyExchangeRepository;
 
 @RestController
 public class CurrencyExchangeController {
@@ -17,11 +18,18 @@ public class CurrencyExchangeController {
 	// Interface representing the environment in which the current application is running. 
 	// Models two key aspects of the application environment: profiles and properties.
 	private Environment environment;
+	
+	@Autowired
+	private CurrencyExchangeRepository repository;
 
 	@GetMapping("/currency-exchange/from/{from}/to/{to}")
 	public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to) {
 		
-		CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
+		CurrencyExchange currencyExchange =repository.findByFromAndTo(from, to);
+		
+		if (currencyExchange == null) {
+			throw new RuntimeException("Unable to find data for " + from + " to " + to);
+		}
 		
 		String port = environment.getProperty("local.server.port");
 		currencyExchange.setEnvironment(port);
