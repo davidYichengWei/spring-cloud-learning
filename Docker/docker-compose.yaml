@@ -18,6 +18,7 @@ services:
       - naming-server
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
+      SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
 
   currency-exchange:
     image: yichengwei/currency-exchange-service:0.0.1-SNAPSHOT
@@ -29,6 +30,7 @@ services:
       - naming-server
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
+      SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
   
   currency-conversion:
     image: yichengwei/currency-conversion-service:0.0.1-SNAPSHOT
@@ -40,6 +42,15 @@ services:
       - naming-server
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
+      SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    ports:
+      - "9411:9411"
+    networks:
+      - currency-network
+    restart: always
 
 networks:
   currency-network:
