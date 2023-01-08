@@ -8,7 +8,7 @@ import com.microservices.currencyconversionservice.bean.CurrencyConversion;
 
 // Connect to currency-exchange service
 //@FeignClient(name = "currency-exchange", url = "localhost:8000")
-@FeignClient(name = "currency-exchange-service") // connect to Eureka ot get the url
+@FeignClient(name = "currency-exchange") // connect to Eureka ot get the url
 public interface CurrencyExchangeProxy {
 
 	@GetMapping("/currency-exchange/from/{from}/to/{to}")
