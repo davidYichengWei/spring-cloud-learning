@@ -16,9 +16,14 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
       SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
+      # Environment variables for RabbitMQ
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
 
   currency-exchange:
     image: yichengwei/currency-exchange-service:0.0.1-SNAPSHOT
@@ -28,9 +33,14 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
       SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
+      # Environment variables for RabbitMQ
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
   
   currency-conversion:
     image: yichengwei/currency-conversion-service:0.0.1-SNAPSHOT
@@ -40,14 +50,35 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
       SPRING.ZIPKIN.BASE-URL: http://zipkin-server:9411/ # Connect to zipkin server
+      # Environment variables for RabbitMQ
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
 
+  # Zipkin server for distributed tracing
   zipkin-server:
     image: openzipkin/zipkin:2.23
     ports:
       - "9411:9411"
+    networks:
+      - currency-network
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      # Environment variables for RabbitMQ, Zipkin only needs to read from RabbitMQ
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+
+  # RabbitMQ for messaging from services to Zipkin
+  rabbitmq:
+    image: rabbitmq:3.8.12-management
+    ports:
+      - "5672:5672" # Communication port
+      - "15672:15672" # Management port
     networks:
       - currency-network
     restart: always
