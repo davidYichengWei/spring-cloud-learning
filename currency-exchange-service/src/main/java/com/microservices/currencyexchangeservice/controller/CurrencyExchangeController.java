@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.microservices.currencyexchangeservice.bean.CurrencyExchange;
 import com.microservices.currencyexchangeservice.jpa.CurrencyExchangeRepository;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 public class CurrencyExchangeController {
 	
@@ -23,6 +25,7 @@ public class CurrencyExchangeController {
 	private CurrencyExchangeRepository repository;
 
 	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+	@CircuitBreaker(name = "default")
 	public CurrencyExchange retrieveExchangeValue(@PathVariable String from, @PathVariable String to) {
 		
 		CurrencyExchange currencyExchange =repository.findByFromAndTo(from, to);
