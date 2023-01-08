@@ -7,6 +7,17 @@ services:
       - "8761:8761"
     networks:
       - currency-network
+  
+  api-gateway:
+    image: yichengwei/api-gateway:0.0.1-SNAPSHOT
+    ports:
+      - "8765:8765"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka/ # Connect to naming server
 
   currency-exchange:
     image: yichengwei/currency-exchange-service:0.0.1-SNAPSHOT
