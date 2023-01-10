@@ -23,9 +23,12 @@ spec:
         app: currency-conversion
     spec:
       containers:
-      - image: in28min/mmv2-currency-conversion-service:0.0.11-SNAPSHOT
+      - image: in28min/mmv2-currency-conversion-service:0.0.12-SNAPSHOT
         imagePullPolicy: IfNotPresent
         name: mmv2-currency-conversion-service
+        env:
+          - name: CURRENCY_EXCHANGE_URI
+            value: http://currency-exchange # Access the k8s service
       restartPolicy: Always
 
 

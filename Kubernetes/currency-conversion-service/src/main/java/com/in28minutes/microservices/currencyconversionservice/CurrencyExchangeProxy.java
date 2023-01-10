@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 //CHANGE-KUBERNETES
 // Use CURRENCY_EXCHANGE_SERVICE_HOST if exists, otherwise, use localhost
-@FeignClient(name = "currency-exchange", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:8000")
-//@FeignClient(name = "currency-exchange", url = "${CURRENCY_EXCHANGE_URI:http://localhost}:8000")
+// CURRENCY_EXCHANGE_SERVICE_HOST will be created by Kubernetes
+// @FeignClient(name = "currency-exchange", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:8000")
+// CURRENCY_EXCHANGE_URI is a custom environment variable
+@FeignClient(name = "currency-exchange", url = "${CURRENCY_EXCHANGE_URI:http://localhost}:8000")
 public interface CurrencyExchangeProxy {
 	
 	@GetMapping("/currency-exchange/from/{from}/to/{to}")
