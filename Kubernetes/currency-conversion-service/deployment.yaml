@@ -8,7 +8,7 @@ metadata:
   name: currency-conversion
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: currency-conversion
@@ -30,6 +30,17 @@ spec:
         envFrom:
         - configMapRef:
             name: currency-conversion-config
+        # 2 probes supported by spring boot actuator
+        # If the readiness probe fails, the pod will not receive traffic from the service
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/readiness
+        # If the liveness probe fails, the pod will be restarted
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/liveness
       restartPolicy: Always
 
 
