@@ -26,9 +26,10 @@ spec:
       - image: in28min/mmv2-currency-conversion-service:0.0.12-SNAPSHOT
         imagePullPolicy: IfNotPresent
         name: mmv2-currency-conversion-service
-        env:
-          - name: CURRENCY_EXCHANGE_URI
-            value: http://currency-exchange # Access the k8s service
+        # Use the environment variables from the ConfigMap
+        envFrom:
+        - configMapRef:
+            name: currency-conversion-config
       restartPolicy: Always
 
 
@@ -52,3 +53,14 @@ spec:
     app: currency-conversion # Select the deployment with this label
   sessionAffinity: None
   type: LoadBalancer
+
+---
+
+# ConfigMap to store environment variables for currency-conversion deployment
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: currency-conversion-config
+  namespace: default
+data:
+  CURRENCY_EXCHANGE_URI: http://currency-exchange
